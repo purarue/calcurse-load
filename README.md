@@ -21,7 +21,7 @@ python3 -m calcurse_load --pre-load gcal >>/tmp/calcurse_load.log 2>&1
 ## Setup
 
 ```bash
-git clone https://github.com/seanbreckenridge/calcurse-load && cd ./calcurse-load
+git clone https://github.com/purarue/calcurse-load && cd ./calcurse-load
 # copy over calcurse hooks
 # assuming its not overwriting any hooks, else youd have to manually copy in parts of the scripts
 cp ./hooks/* ~/.config/calcurse/hooks/

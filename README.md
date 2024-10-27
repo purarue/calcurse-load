@@ -8,7 +8,7 @@ Hooks/scripts for loading data for calcurse. This integrates [`calcurse`](https:
 
 This doesn't write back to Google Calendar, its only used to source events.
 
-Should be mentioned that deleting a todo in calcurse does nothing, because the corresponding `todotxt` still exists. Only reason for me to load my todos into `calcurse` is to remind me what they are, and to possibly add new ones. I have [other ways](https://sean.fish/d/todo-prompt?dark) I mark todos as done.
+Should be mentioned that deleting a todo in calcurse does nothing, because the corresponding `todotxt` still exists. Only reason for me to load my todos into `calcurse` is to remind me what they are, and to possibly add new ones. I have [other ways](https://purarue.xyz/d/todo-prompt?dark) I mark todos as done.
 
 Other than the extensions provided here, you can also define completely custom behaviour by creating your own extensions, see [extension reference](#calcurse_load-reference)
 

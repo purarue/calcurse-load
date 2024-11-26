@@ -16,7 +16,10 @@ logpath = os.path.join(gettempdir(), "calcurse_load.log")
 def setup(level: Optional[int] = None) -> logging.Logger:
     chosen_level = level or int(os.environ.get("CALCURSE_LOAD_LOGS", DEFAULT_LEVEL))
     lgr: logging.Logger = setup_logger(
-        name=__package__, level=chosen_level, disableStderrLogger=True, logfile=logpath
+        name="calcurse_load",
+        level=chosen_level,
+        disableStderrLogger=True,
+        logfile=logpath,
     )
     return lgr
 

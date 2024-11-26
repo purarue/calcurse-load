@@ -111,7 +111,7 @@ class gcal_ext(Extension):
         - create google events from JSON
         - write back both event types
         """
-        self.logger.warn("gcal: running pre-load hook")
+        self.logger.warning("gcal: running pre-load hook")
 
         filtered_apts: List[CalcurseLine] = list(self.load_calcurse_apts())
         self.logger.info(f"Found {len(filtered_apts)} non-gcal events")
@@ -124,7 +124,7 @@ class gcal_ext(Extension):
             ev for ev in map(calcurse_func, self.load_json_events()) if ev is not None
         ]
         self.logger.info(
-            f"Writing {len(google_apts)} gcal events to calcurse appointments file"
+            f"Writing {len(google_apts)} [gcal] events to calcurse appointments file"
         )
 
         events = filtered_apts + google_apts
@@ -141,4 +141,4 @@ class gcal_ext(Extension):
         (self.config.calcurse_dir / "apts").write_text(buf.getvalue())
 
     def post_save(self) -> None:
-        self.logger.warn("gcal: doesn't have a post-save hook!")
+        self.logger.warning("gcal: doesn't have a post-save hook!")

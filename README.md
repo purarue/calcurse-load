@@ -12,7 +12,7 @@ Should be mentioned that deleting a todo in calcurse does nothing, because the c
 
 Other than the extensions provided here, you can also define completely custom behaviour by creating your own extensions, see [extension reference](#calcurse_load-reference)
 
-As a general warning, if theres any output from the hooks, calcurse fails to load, so you could do something like this in your `pre-load` script:
+As a general warning, if there's any output from the hooks, calcurse fails to load, so you could do something like this in your `pre-load` script:
 
 ```python
 python3 -m calcurse_load --pre-load gcal >>/tmp/calcurse_load.log 2>&1

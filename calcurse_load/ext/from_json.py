@@ -17,14 +17,14 @@ from .gcal import CalcurseLine, create_calcurse_timestamp
 class CalcurseEventJson(BaseModel):
     start_date: datetime
     summary: str
-    end_date: datetime | None = None
-    notes: str | None = None
+    end_date: Optional[datetime] = None
+    notes: Optional[str] = None
 
 
 def create_calcurse_event(
     event_data: CalcurseEventJson, notes_dir: Path
 ) -> Optional[CalcurseLine]:
-    note_hash: str | None = None
+    note_hash: Optional[str] = None
     if event_data.notes:
         note_hash = hashlib.sha1(event_data.notes.encode()).hexdigest()
         with (notes_dir / note_hash).open("w") as nf:

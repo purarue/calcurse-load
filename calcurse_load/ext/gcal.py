@@ -94,6 +94,7 @@ class gcal_ext(Extension):
             )
         else:
             for event_json_path in json_files:
+                self.logger.info(f"[gcal] Loading appointments from {event_json_path}")
                 with open(event_json_path, "r") as json_f:
                     yield from json.load(json_f)
 

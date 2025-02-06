@@ -6,7 +6,7 @@ import io
 from functools import partial
 from pathlib import Path
 from datetime import datetime
-from typing import List, Iterator, Optional
+from typing import List, Iterator, Optional, get_args
 from pydantic import BaseModel
 
 from .abstract import Extension
@@ -46,6 +46,11 @@ def is_json_event(appointment_line: CalcurseLine) -> bool:
 
 class json_ext(Extension):
     def load_json_events(self) -> Iterator[CalcurseEventJson]:
+        date_fields = {
+            k
+            for k, v in CalcurseEventJson.model_fields.items()
+            if v.annotation == datetime or datetime in get_args(v.annotation)
+        }
         json_files: List[str] = glob.glob(
             str(self.config.calcurse_load_dir / "json" / "*.json")
         )
@@ -58,6 +63,10 @@ class json_ext(Extension):
                 with open(event_json_path, "r") as json_f:
                     items = json.load(json_f)
                     for item in items:
+                        item = {
+                            k: v.strip() if k in date_fields else v
+                            for k, v in item.items()
+                        }
                         yield CalcurseEventJson.model_validate(item)
 
     def load_calcurse_apts(self) -> Iterator[CalcurseLine]:

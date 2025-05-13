@@ -85,7 +85,7 @@ def _serialize_dateish(d: Optional[Union[date, datetime]]) -> Optional[int]:
 
 
 def _parse_attendies(
-    e: Union[Attendee, str, List[Attendee], List[str]]
+    e: Union[Attendee, str, List[Attendee], List[str]],
 ) -> List[AttendeeDict]:
     if isinstance(e, Attendee):
         return [

@@ -1,0 +1,65 @@
+[project]
+name = "calcurse_load"
+version = "0.1.2"
+description = "Sources events for calcurse from Google Calendar and todo.txt"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+keywords = ["calendar", "todo", "google"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+  "click",
+  "cssselect",
+  "gcsa>=0.4.0",
+  "logzero",
+  "lxml",
+  "pydantic",
+]
+[[project.authors]]
+name = "purarue"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+calcurse_load = "calcurse_load.__main__:cli"
+gcal_index = "gcal_index.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/purarue/calcurse_load"
+
+[project.optional-dependencies]
+testing = ["flake8", "mypy", "pytest"]
+
+[tool.mypy]
+pretty = "True"
+show_error_context = "True"
+show_error_codes = "True"
+check_untyped_defs = "True"
+namespace_packages = "True"
+disallow_any_generics = "True"
+disallow_subclassing_any = "True"
+disallow_untyped_calls = "True"
+disallow_untyped_defs = "True"
+disallow_incomplete_defs = "True"
+no_implicit_optional = "True"
+warn_redundant_casts = "True"
+warn_return_any = "True"
+warn_unreachable = "True"
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules calcurse_load"
+
+[tool.setuptools.packages.find]
+include = ["calcurse_load", "calcurse_load.*", "gcal_index"]
+exclude = ["tests*"]

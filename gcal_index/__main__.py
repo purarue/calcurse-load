@@ -138,7 +138,7 @@ def get_events(cal: GoogleCalendar, end_days: int) -> Iterator[Event]:
 )
 @click.option(
     "--calendar",
-    help="Specify which calendar to export from",
+    help="Specify which calendar to export from. If not using the primary, you need to specify the calendars ID (this can be something like an email address, viewable by going to calendar settings)",
     default="primary",
     show_default=True,
 )

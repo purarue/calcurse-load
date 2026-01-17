@@ -7,7 +7,8 @@ import io
 from functools import partial
 from pathlib import Path
 from datetime import datetime
-from typing import List, Iterator, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
+from collections.abc import Iterator
 
 from .abstract import Extension
 from .utils import yield_lines
@@ -25,7 +26,7 @@ def pad(i: int) -> str:
     return str(i).zfill(2)
 
 
-def create_calcurse_timestamp(epochtime: Optional[int]) -> str:
+def create_calcurse_timestamp(epochtime: int | None) -> str:
     """
     Create a string that represents the time in Calcurses timestamp format
     """
@@ -44,7 +45,7 @@ def create_calcurse_note(event_data: GcalAppointmentData, notes_dir: Path) -> st
     Notes file contains the Google Calendar description, a link
     to the event, and any other metadata.
     """
-    note_info: List[str] = []
+    note_info: list[str] = []
     if event_data["summary"] is not None:
         note_info.append(event_data["summary"])
     if event_data["event_link"] is not None:
@@ -62,7 +63,7 @@ def create_calcurse_note(event_data: GcalAppointmentData, notes_dir: Path) -> st
 
 def create_calcurse_event(
     event_data: GcalAppointmentData, notes_dir: Path, logger: logging.Logger
-) -> Optional[CalcurseLine]:
+) -> CalcurseLine | None:
     """
     Takes the exported Google Calendar info, and creates
     a corresponding Calcurse 'apts' line, and note
@@ -85,17 +86,17 @@ def is_google_event(appointment_line: CalcurseLine) -> bool:
 
 class gcal_ext(Extension):
     def load_json_events(self) -> Iterator[GcalAppointmentData]:
-        json_files: List[str] = glob.glob(
+        json_files: list[str] = glob.glob(
             str(self.config.calcurse_load_dir / "gcal" / "*.json")
         )
         if not json_files:
             self.logger.warning(
-                "No json files found in '{}'".format(str(self.config.calcurse_load_dir))
+                f"No json files found in '{str(self.config.calcurse_load_dir)}'"
             )
         else:
             for event_json_path in json_files:
                 self.logger.info(f"[gcal] Loading appointments from {event_json_path}")
-                with open(event_json_path, "r") as json_f:
+                with open(event_json_path) as json_f:
                     yield from json.load(json_f)
 
     def load_calcurse_apts(self) -> Iterator[CalcurseLine]:
@@ -114,14 +115,14 @@ class gcal_ext(Extension):
         """
         self.logger.warning("gcal: running pre-load hook")
 
-        filtered_apts: List[CalcurseLine] = list(self.load_calcurse_apts())
+        filtered_apts: list[CalcurseLine] = list(self.load_calcurse_apts())
         self.logger.info(f"Found {len(filtered_apts)} non-gcal events")
         calcurse_func = partial(
             create_calcurse_event,
             notes_dir=self.config.calcurse_dir / "notes",
             logger=self.logger,
         )
-        google_apts: List[CalcurseLine] = [
+        google_apts: list[CalcurseLine] = [
             ev for ev in map(calcurse_func, self.load_json_events()) if ev is not None
         ]
         self.logger.info(

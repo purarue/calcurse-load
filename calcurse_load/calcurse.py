@@ -25,7 +25,7 @@ def get_configuration() -> Configuration:
         calcurse_load_dir = Path(os.environ["CALCURSE_LOAD_DIR"])
     if not calcurse_dir.exists():
         warnings.warn(
-            "Calcurse data directory at {} doesn't exist.".format(str(calcurse_dir))
+            f"Calcurse data directory at {str(calcurse_dir)} doesn't exist."
         )
     if not calcurse_load_dir.exists():
         calcurse_load_dir.mkdir(parents=True)

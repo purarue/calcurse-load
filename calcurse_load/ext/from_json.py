@@ -6,7 +6,8 @@ import io
 from functools import partial
 from pathlib import Path
 from datetime import datetime
-from typing import List, Iterator, Optional, get_args
+from typing import get_args
+from collections.abc import Iterator
 from pydantic import BaseModel
 
 from .abstract import Extension
@@ -17,14 +18,14 @@ from .gcal import CalcurseLine, create_calcurse_timestamp
 class CalcurseEventJson(BaseModel):
     start_date: datetime
     summary: str
-    end_date: Optional[datetime] = None
-    notes: Optional[str] = None
+    end_date: datetime | None = None
+    notes: str | None = None
 
 
 def create_calcurse_event(
     event_data: CalcurseEventJson, notes_dir: Path
-) -> Optional[CalcurseLine]:
-    note_hash: Optional[str] = None
+) -> CalcurseLine | None:
+    note_hash: str | None = None
     if event_data.notes:
         note_hash = hashlib.sha1(event_data.notes.encode()).hexdigest()
         with (notes_dir / note_hash).open("w") as nf:
@@ -51,16 +52,16 @@ class json_ext(Extension):
             for k, v in CalcurseEventJson.model_fields.items()
             if v.annotation == datetime or datetime in get_args(v.annotation)
         }
-        json_files: List[str] = glob.glob(
+        json_files: list[str] = glob.glob(
             str(self.config.calcurse_load_dir / "json" / "*.json")
         )
         if not json_files:
             self.logger.warning(
-                "No json files found in '{}'".format(str(self.config.calcurse_load_dir))
+                f"No json files found in '{str(self.config.calcurse_load_dir)}'"
             )
         else:
             for event_json_path in json_files:
-                with open(event_json_path, "r") as json_f:
+                with open(event_json_path) as json_f:
                     items = json.load(json_f)
                     for item in items:
                         item = {
@@ -85,13 +86,13 @@ class json_ext(Extension):
         """
         self.logger.warning("json: running pre-load hook")
 
-        filtered_apts: List[CalcurseLine] = list(self.load_calcurse_apts())
+        filtered_apts: list[CalcurseLine] = list(self.load_calcurse_apts())
         self.logger.info(f"Found {len(filtered_apts)} non-json events")
         calcurse_func = partial(
             create_calcurse_event,
             notes_dir=self.config.calcurse_dir / "notes",
         )
-        json_events: List[CalcurseLine] = [
+        json_events: list[CalcurseLine] = [
             ev for ev in map(calcurse_func, self.load_json_events()) if ev is not None
         ]
         self.logger.info(

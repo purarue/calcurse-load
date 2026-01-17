@@ -1,10 +1,9 @@
-from typing import Type
 from .abstract import Extension
 
 EXTENSION_NAMES = {"gcal", "todotxt", "json"}
 
 
-def get_extension(name: str) -> Type[Extension]:
+def get_extension(name: str) -> type[Extension]:
     if name == "gcal":
         from .gcal import gcal_ext
 

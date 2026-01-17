@@ -3,7 +3,8 @@ import os
 import json
 import click
 from itertools import chain
-from typing import Iterator, Any, Dict, Optional, Union, List, TypedDict
+from typing import Any, TypedDict
+from collections.abc import Iterator
 from datetime import date, timedelta, datetime
 
 from lxml import html  # type: ignore[import]
@@ -14,7 +15,7 @@ home = os.path.expanduser("~")
 
 default_credential_file = os.path.join(home, ".credentials", "credentials.json")
 
-Json = Dict[str, Any]
+Json = dict[str, Any]
 
 
 class AttendeeDict(TypedDict):
@@ -24,13 +25,13 @@ class AttendeeDict(TypedDict):
 
 class GcalAppointmentData(TypedDict):
     summary: str
-    start: Optional[int]
-    end: Optional[int]
+    start: int | None
+    end: int | None
     event_id: str
     description: Json
     location: str
-    recurrence: List[str]
-    attendees: List[AttendeeDict]
+    recurrence: list[str]
+    attendees: list[AttendeeDict]
     event_link: Any
 
 
@@ -38,7 +39,7 @@ ATTENDEE_KEYS = ["email", "response_status"]
 
 
 def create_calendar(
-    email: str, credential_file: str, calendar: Optional[str] = None
+    email: str, credential_file: str, calendar: str | None = None
 ) -> GoogleCalendar:
     cal = email
     if calendar is not None:
@@ -51,13 +52,13 @@ def create_calendar(
     )
 
 
-def n_days(days: Union[int, str]) -> date:
+def n_days(days: int | str) -> date:
     """Get the date, for n days into the future"""
     return date.today() + timedelta(days=int(days))
 
 
-def _parse_html_description(htmlstr: Optional[str]) -> Json:
-    data: Dict[str, Union[str, None, List[str]]] = {"text": None, "links": []}
+def _parse_html_description(htmlstr: str | None) -> Json:
+    data: dict[str, str | None | list[str]] = {"text": None, "links": []}
     if htmlstr is None:
         return data
     root: html.HtmlElement = html.fromstring(htmlstr)
@@ -68,12 +69,12 @@ def _parse_html_description(htmlstr: Optional[str]) -> Json:
             chain(*[link.values() for link in root.cssselect("a")]),
         )
     )
-    text_lines: List[str] = [t.strip() for t in root.itertext() if t is not None]
+    text_lines: list[str] = [t.strip() for t in root.itertext() if t is not None]
     data["text"] = "\n".join(text_lines)
     return data
 
 
-def _serialize_dateish(d: Optional[Union[date, datetime]]) -> Optional[int]:
+def _serialize_dateish(d: date | datetime | None) -> int | None:
     if d is None:
         return None
     elif isinstance(d, datetime):
@@ -85,8 +86,8 @@ def _serialize_dateish(d: Optional[Union[date, datetime]]) -> Optional[int]:
 
 
 def _parse_attendies(
-    e: Union[Attendee, str, List[Attendee], List[str]],
-) -> List[AttendeeDict]:
+    e: Attendee | str | list[Attendee] | list[str],
+) -> list[AttendeeDict]:
     if isinstance(e, Attendee):
         return [
             {

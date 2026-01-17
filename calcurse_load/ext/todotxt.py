@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Optional, Iterator, List, Set
+from collections.abc import Iterator
 from functools import lru_cache
 
 from dataclasses import dataclass
@@ -108,18 +108,18 @@ class todotxt_ext(Extension):
         Replace the calcurse todos with my todo.txt file contents
         """
         # search common locations
-        todo_file: Optional[Path] = self._find_todo_file()
+        todo_file: Path | None = self._find_todo_file()
         if todo_file is None:
             self.logger.warning("Could not find todo.txt file in expected locations")
             return
         # read in todo.txt items
-        todos: List[TodoTxtTodo] = list(self._read_todotxt_file(todo_file))
+        todos: list[TodoTxtTodo] = list(self._read_todotxt_file(todo_file))
         # convert to calcurse format
-        calcurse_todos: List[CalcurseTodo] = list(map(lambda t: t.convert(), todos))
+        calcurse_todos: list[CalcurseTodo] = list(map(lambda t: t.convert(), todos))
         # write to calcurse file
         with open(self.config.calcurse_dir / "todo", "w") as calcurse_todof:
             for cl in calcurse_todos:
-                calcurse_todof.write("{}\n".format(cl.line))
+                calcurse_todof.write(f"{cl.line}\n")
 
     def post_save(self) -> None:
         """
@@ -127,19 +127,19 @@ class todotxt_ext(Extension):
         If there are any items in calcurse that I added that aren't in my todo.txt, add it to my todo.txt file
         """
         # read the calcurse todos
-        calcurse_todos: List[CalcurseTodo] = list(
+        calcurse_todos: list[CalcurseTodo] = list(
             self._read_calcurse_file(self.config.calcurse_dir / "todo")
         )
-        todo_file: Optional[Path] = self._find_todo_file()
+        todo_file: Path | None = self._find_todo_file()
         if todo_file is None:
             self.logger.warning("Could not find todo.txt file in expected locations")
             return
         # read in todo.txt items, save a set of the text descriptions, so we can compare
         # to the newly saved calcurse todos.
-        todos: List[TodoTxtTodo] = list(self._read_todotxt_file(todo_file))
-        todo_text: Set[str] = set(map(lambda t: t.text, todos))
+        todos: list[TodoTxtTodo] = list(self._read_todotxt_file(todo_file))
+        todo_text: set[str] = set(map(lambda t: t.text, todos))
         # convert the calcurse todos to todotxt todos, so we can see if any were added
-        converted_todos: List[TodoTxtTodo] = list(
+        converted_todos: list[TodoTxtTodo] = list(
             map(lambda t: t.convert(), calcurse_todos)
         )
         new_todos = [c for c in converted_todos if c.text not in todo_text]
@@ -148,11 +148,11 @@ class todotxt_ext(Extension):
             todos.extend(new_todos)
             with open(todo_file, "w") as todotxt_f:
                 for td in todos:
-                    todotxt_f.write("{}\n".format(td.line))
+                    todotxt_f.write(f"{td.line}\n")
 
     @staticmethod
     @lru_cache(1)
-    def _find_todo_file() -> Optional[Path]:
+    def _find_todo_file() -> Path | None:
         """
         Resolution order:
             - $TODOTXT_FILE

@@ -3,7 +3,8 @@ Parse the apts file to get all current events
 """
 
 import string
-from typing import NamedTuple, Iterator, Union
+from typing import NamedTuple
+from collections.abc import Iterator
 from datetime import datetime, date
 
 from .calcurse import get_configuration
@@ -13,7 +14,7 @@ from .ext.utils import yield_lines
 config = get_configuration()
 
 
-def parse_date(date: str) -> Union[datetime, date]:
+def parse_date(date: str) -> datetime | date:
     if "@" in date:
         try:
             return datetime.strptime(date.strip(), "%m/%d/%Y @ %H:%M")
@@ -31,11 +32,11 @@ ALLOWED = set(string.ascii_letters)
 
 
 class Apt(NamedTuple):
-    start: Union[datetime, date]
-    to: Union[datetime, date, None]
+    start: datetime | date
+    to: datetime | date | None
     summary: str
-    note_hash: Union[str, None]
-    datasource: Union[str, None]
+    note_hash: str | None
+    datasource: str | None
     raw: str
 
     @property
@@ -45,7 +46,7 @@ class Apt(NamedTuple):
         return datetime.combine(self.start, datetime.min.time())
 
     @staticmethod
-    def extract_datasource(line: str) -> Union[str, None]:
+    def extract_datasource(line: str) -> str | None:
         if not line.endswith("]"):
             return None
         last_left = line.rfind("[")

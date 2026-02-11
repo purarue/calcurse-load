@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 import json
 import glob
 import hashlib
@@ -71,13 +72,18 @@ def create_calcurse_event(
     if event_data["start"] is None:
         logger.warning(f"Event {event_data} has no start time")
         return None
+    if event_data["summary"] is None:
+        logger.warning(f"Event {event_data} has no start time")
+        return None
     note_hash: str = create_calcurse_note(event_data, notes_dir)
     start_str = create_calcurse_timestamp(event_data["start"])
     end_str = create_calcurse_timestamp(event_data["end"])
+    desc = " ".join(event_data["summary"].splitlines()).strip()
+    assert os.linesep not in desc
     if end_str == "":
-        return f"{start_str} -> {start_str}>{note_hash} |{event_data['summary']} [gcal]"
+        return f"{start_str} -> {start_str}>{note_hash} |{desc} [gcal]"
     else:
-        return f"{start_str} -> {end_str}>{note_hash} |{event_data['summary']} [gcal]"
+        return f"{start_str} -> {end_str}>{note_hash} |{desc} [gcal]"
 
 
 def is_google_event(appointment_line: CalcurseLine) -> bool:

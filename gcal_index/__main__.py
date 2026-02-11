@@ -24,7 +24,7 @@ class AttendeeDict(TypedDict):
 
 
 class GcalAppointmentData(TypedDict):
-    summary: str
+    summary: str | None
     start: int | None
     end: int | None
     event_id: str

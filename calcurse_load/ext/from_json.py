@@ -1,4 +1,5 @@
 from __future__ import annotations
+import os
 import json
 import glob
 import hashlib
@@ -38,7 +39,9 @@ def create_calcurse_event(
     ts = f"{start_str} -> {start_str if end_str == '' else end_str}"
     if note_hash is not None:
         ts += f">{note_hash}"
-    return f"{ts} |{event_data.summary} [json]"
+    desc = event_data.summary.strip()
+    assert os.linesep not in desc
+    return f"{ts} |{desc} [json]"
 
 
 def is_json_event(appointment_line: CalcurseLine) -> bool:
@@ -85,7 +88,6 @@ class json_ext(Extension):
         - write back both event types
         """
         self.logger.warning("json: running pre-load hook")
-
         filtered_apts: list[CalcurseLine] = list(self.load_calcurse_apts())
         self.logger.info(f"Found {len(filtered_apts)} non-json events")
         calcurse_func = partial(

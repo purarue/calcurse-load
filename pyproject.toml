@@ -1,17 +1,15 @@
 [project]
 name = "calcurse_load"
-version = "0.1.2"
+version = "0.1.3"
 description = "Sources events for calcurse from Google Calendar and todo.txt"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 keywords = ["calendar", "todo", "google"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",

@@ -4,9 +4,10 @@ Hooks/scripts for loading data for calcurse. This integrates [`calcurse`](https:
 - [usage](#usage)
   - [gcal](#gcal-pre-load)
   - [todotxt](#todotxt)
+  - [json](#json)
 - [API reference](#api-reference)
----
 
+---
 
 - pre-load:
   - Looks at the locally indexed Google Calendar JSON dump, adds events as `calcurse` appointments; adds summary/HTML links as appointment notes.
@@ -114,6 +115,25 @@ The `pre-load`/`post-save` `todotxt` hook converts the `calcurse` todos back to 
 | (B)      | 4 - 6    |
 | (C)      | 7 - 9    |
 | None     | 0        |
+
+### json
+
+This also supports loading arbitrary JSON files, which could be the output of any command that generates JSON
+
+Those files should look like this:
+
+```json
+[
+  {
+    "start_date": "2025-06-05T18:00",
+    "summary": "event name",
+    "notes": "something here",
+    "end_date": "2025-06-05T20:00"
+  },
+  {
+    ...
+]
+```
 
 ## API reference
 

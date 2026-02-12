@@ -29,8 +29,10 @@ def create_calcurse_event(
     note_hash: str | None = None
     if event_data.notes:
         note_hash = hashlib.sha1(event_data.notes.encode()).hexdigest()
-        with (notes_dir / note_hash).open("w") as nf:
-            nf.write(event_data.notes)
+        target = notes_dir / note_hash
+        if not target.exists():
+            with target.open("w") as nf:
+                nf.write(event_data.notes)
 
     start_str = create_calcurse_timestamp(int(event_data.start_date.timestamp()))
     end_str = create_calcurse_timestamp(

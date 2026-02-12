@@ -1,5 +1,13 @@
 Hooks/scripts for loading data for calcurse. This integrates [`calcurse`](https://github.com/lfos/calcurse) with Google Calendar, and [`todo.txt`](http://todotxt.org/).
 
+- [setup](#setup)
+- [usage](#usage)
+  - [gcal](#gcal-pre-load)
+  - [todotxt](#todotxt)
+- [API reference](#api-reference)
+---
+
+
 - pre-load:
   - Looks at the locally indexed Google Calendar JSON dump, adds events as `calcurse` appointments; adds summary/HTML links as appointment notes.
   - Replace `calcurse`s todos with my current [`todo.txt`](http://todotxt.org/), converting priorities accordingly.
@@ -43,11 +51,11 @@ alias calcurse='calcurse --datadir "$CALCURSE_DIR" --confdir ~/.config/calcurse 
 
 In addition to that, this maintains a data directory in `$XDG_DATA_HOME/calcurse_load` (you can overwrite this with `$CALCURSE_LOAD_DIR`), where it stores data for `gcal_index`.
 
-## About
+## Usage
 
 If you wanted to disable one of the `todotxt` or `gcal` extensions, you could remove or rename the corresponding scripts in the `hooks` directory.
 
-## gcal pre-load
+### gcal pre-load
 
 The `gcal` calcurse hook tries to read any `gcal_index`-created JSON files in the `$XDG_DATA_HOME/calcurse_load/gcal/` directory. If there's description/extra information for events from Google Calendar, this attaches corresponding notes to each calcurse event. Specifically, it:
 
@@ -88,7 +96,7 @@ Prints the JSON dump to STDOUT; example:
 
 For an example script one might put under cron, see [`example_update_google_cal`](./example_update_google_cal)
 
-## todotxt
+### todotxt
 
 The `pre-load`/`post-save` `todotxt` hook converts the `calcurse` todos back to `todotxt` todos, and updates the `todotxt` file if any todos were added. A `todo.txt` is searched for in one of the common locations:
 
@@ -107,7 +115,7 @@ The `pre-load`/`post-save` `todotxt` hook converts the `calcurse` todos back to 
 | (C)      | 7 - 9    |
 | None     | 0        |
 
-## calcurse_load reference
+## API reference
 
 `calcurse_load` accepts one, or multiple pre/post hooks, with an extension name. There are individual [`hooks`](./hooks) for for each extension (`gcal`/`todotxt`)
 

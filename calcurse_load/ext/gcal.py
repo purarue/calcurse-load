@@ -142,7 +142,7 @@ class gcal_ext(Extension):
         self.logger.info(f"Found {len(filtered_apts)} non-gcal events")
         events_str = self.load_json_events()
         google_apts: list[tuple[CalcurseLine | None, bool]] = []
-        for file, events in events_str.items():
+        for file, loaded_events in events_str.items():
 
             calcurse_func = partial(
                 create_calcurse_event,
@@ -150,7 +150,7 @@ class gcal_ext(Extension):
                 logger=self.logger,
                 file_base=os.path.splitext(os.path.basename(file))[0],
             )
-            google_apts.extend(list(map(calcurse_func, events)))
+            google_apts.extend(list(map(calcurse_func, loaded_events)))
 
         self.logger.info(
             f"Writing {len(google_apts)} [gcal] events to calcurse appointments file"
@@ -158,12 +158,11 @@ class gcal_ext(Extension):
 
         wrote_google_notes_count = list(map(lambda ev: ev[1], google_apts)).count(True)
         self.logger.info(f"Wrote {wrote_google_notes_count} new [gcal] notes")
-
-        events = [
-            ev
-            for ev in (filtered_apts + [ev[0] for ev in google_apts])
-            if ev is not None
+        gevents: list[CalcurseLine] = [
+            gev for (gev, _) in google_apts if gev is not None
         ]
+
+        events: list[CalcurseLine] = filtered_apts + gevents
         try:
             events.sort(key=lambda x: datetime.strptime(x[:10], "%m/%d/%Y"))
         except Exception as e:

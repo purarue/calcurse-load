@@ -7,7 +7,7 @@ import io
 from functools import partial
 from pathlib import Path
 from datetime import datetime
-from typing import get_args
+from typing import get_args, override
 from collections.abc import Iterator
 from pydantic import BaseModel
 
@@ -81,6 +81,7 @@ class json_ext(Extension):
             if not is_json_event(apt):
                 yield apt
 
+    @override
     def pre_load(self) -> None:
         """
         - read in and filter out json events
@@ -114,5 +115,6 @@ class json_ext(Extension):
 
         (self.config.calcurse_dir / "apts").write_text(buf.getvalue())
 
+    @override
     def post_save(self) -> None:
         self.logger.warning("json: doesn't have a post-save hook!")

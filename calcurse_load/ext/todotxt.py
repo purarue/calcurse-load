@@ -5,6 +5,7 @@ from collections.abc import Iterator
 from functools import lru_cache
 
 from dataclasses import dataclass
+from typing import override
 
 from .abstract import Extension
 from .utils import yield_lines
@@ -16,6 +17,7 @@ class TodoTxtTodo:
     priority: str
     text: str
 
+    @override
     def __hash__(self) -> int:
         return hash(self.text)
 
@@ -45,7 +47,7 @@ class TodoTxtTodo:
         >>> TodoTxtTodo.parse_line("not important")
         TodoTxtTodo(priority='', text='not important')
         """
-        prio, text = re.match(r"^(\([ABC]\))?(.*)", line.strip()).groups()  # type: ignore[union-attr]
+        prio, text = re.match(r"^(\([ABC]\))?(.*)", line.strip()).groups()  # type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]
         if prio is None:
             prio = ""
         return cls(priority=prio, text=text.strip())
@@ -65,6 +67,7 @@ class CalcurseTodo:
     priority: int
     text: str
 
+    @override
     def __hash__(self) -> int:
         return hash(self.text)
 
@@ -94,7 +97,7 @@ class CalcurseTodo:
         >>> CalcurseTodo.parse_line('[1] most important todo')
         CalcurseTodo(priority=1, text='most important todo')
         """
-        prio, text = re.match(r"^(\[\d+\])(.*)", line.strip()).groups()  # type: ignore[union-attr]
+        prio, text = re.match(r"^(\[\d+\])(.*)", line.strip()).groups()  # type: ignore[union-attr]  # pyright: ignore[reportOptionalMemberAccess]
         return cls(priority=int(prio.strip("[]")), text=text.strip())
 
     @property
@@ -103,6 +106,7 @@ class CalcurseTodo:
 
 
 class todotxt_ext(Extension):
+    @override
     def pre_load(self) -> None:
         """
         Replace the calcurse todos with my todo.txt file contents
@@ -121,6 +125,7 @@ class todotxt_ext(Extension):
             for cl in calcurse_todos:
                 calcurse_todof.write(f"{cl.line}\n")
 
+    @override
     def post_save(self) -> None:
         """
         After calcurse has saved, read the calcurse todo file, and compare that with my todo.txt file

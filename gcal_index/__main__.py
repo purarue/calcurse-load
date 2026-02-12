@@ -39,7 +39,10 @@ ATTENDEE_KEYS = ["email", "response_status"]
 
 
 def create_calendar(
-    email: str, credential_file: str, calendar: str | None = None
+    email: str,
+    credential_file: str,
+    calendar: str | None = None,
+    start_date: datetime | None = None,
 ) -> GoogleCalendar:
     cal = email
     if calendar is not None:
@@ -118,8 +121,11 @@ def event_to_dict(e: Event) -> GcalAppointmentData:
 
 
 # get events from 1900 to now + args.end_days
-def get_events(cal: GoogleCalendar, end_days: int) -> Iterator[Event]:
-    yield from cal.get_events(date(1900, 1, 1), n_days(end_days))
+def get_events(
+    cal: GoogleCalendar, start_date: datetime | None, end_days: int
+) -> Iterator[Event]:
+    use_date = start_date or datetime.fromtimestamp(0)
+    yield from cal.get_events(use_date, n_days(end_days))
 
 
 @click.command()
@@ -129,6 +135,13 @@ def get_events(cal: GoogleCalendar, end_days: int) -> Iterator[Event]:
     help="Google credential file",
     default=default_credential_file,
     required=True,
+)
+@click.option(
+    "--start-date",
+    type=click.DateTime(),
+    default=None,
+    show_default=False,
+    help="Specify starting date, by default this fetches all past events",
 )
 @click.option(
     "--end-days",
@@ -143,7 +156,13 @@ def get_events(cal: GoogleCalendar, end_days: int) -> Iterator[Event]:
     default="primary",
     show_default=True,
 )
-def main(email: str, credential_file: str, end_days: int, calendar: str) -> None:
+def main(
+    email: str,
+    start_date: datetime | None,
+    credential_file: str,
+    end_days: int,
+    calendar: str,
+) -> None:
     """
     Export Google Calendar events
     """
@@ -153,7 +172,11 @@ def main(email: str, credential_file: str, end_days: int, calendar: str) -> None
         )
         sys.exit(1)
     cal = create_calendar(email, credential_file, calendar)
-    print(json.dumps(list(map(event_to_dict, get_events(cal, end_days)))))
+    print(
+        json.dumps(
+            list(map(event_to_dict, get_events(cal, start_date, end_days=end_days)))
+        )
+    )
 
 
 if __name__ == "__main__":

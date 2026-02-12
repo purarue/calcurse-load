@@ -81,14 +81,21 @@ Usage: python -m gcal_index [OPTIONS]
   Export Google Calendar events
 
 Options:
-  --email TEXT            Google Email to export  [required]
-  --credential-file TEXT  Google credential file  [required]
-  --end-days INTEGER      Specify how many days into the future to get events
-                          for (if we went forever, repeating events would be
-                          there in 2050)  [default: 90]
-  --calendar TEXT         Specify which calendar to export from  [default:
-                          primary]
-  --help                  Show this message and exit.
+  --email TEXT                    Google Email to export  [required]
+  --credential-file TEXT          Google credential file  [required]
+  --start-date [%Y-%m-%d|%Y-%m-%dT%H:%M:%S|%Y-%m-%d %H:%M:%S]
+                                  Specify starting date, by default this
+                                  fetches all past events
+  --end-days INTEGER              Specify how many days into the future to get
+                                  events for (if we went forever, repeating
+                                  events would be there in 2050)  [default:
+                                  90]
+  --calendar TEXT                 Specify which calendar to export from. If
+                                  not using the primary, you need to specify
+                                  the calendars ID (this can be something like
+                                  an email address, viewable by going to
+                                  calendar settings)  [default: primary]
+  --help                          Show this message and exit.
 ```
 
 Prints the JSON dump to STDOUT; example:

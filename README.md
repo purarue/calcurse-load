@@ -6,7 +6,9 @@ Hooks/scripts for loading data for calcurse. This integrates [`calcurse`](https:
 - post-save
   - If any new todos are added, write those back to my `todo.txt` file.
 
-This doesn't write back to Google Calendar, its only used to source events.
+This doesn't write back to Google Calendar, its not CalDAV integrations, you can think of it more like a read-only view for google calendar.
+
+I use this locally save mine and other local community calendars, and view them offline in my terminal.
 
 Should be mentioned that deleting a todo in calcurse does nothing, because the corresponding `todotxt` still exists. Only reason for me to load my todos into `calcurse` is to remind me what they are, and to possibly add new ones. I have [other ways](https://purarue.xyz/d/todo-prompt?dark) I mark todos as done.
 
@@ -25,7 +27,7 @@ git clone https://github.com/purarue/calcurse-load && cd ./calcurse-load
 # copy over calcurse hooks
 # assuming its not overwriting any hooks, else youd have to manually copy in parts of the scripts
 cp ./hooks/* ~/.config/calcurse/hooks/
-pip install .  # install current directory with pip
+pip install . # install current directory with pip
 ```
 
 This installs 2 python scripts/modules, `gcal_index`, and `calcurse_load`.
